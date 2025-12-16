@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0">
     <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/styles/default.min.css" />
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/stackoverflow-dark.min.css">
@@ -14,28 +14,39 @@
         rel="stylesheet">
     <link rel="stylesheet" href="bettergpt.css">
     <link rel="icon" href="./img/favicon.png" type="image/png" sizes="64x64">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+        integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
 
     <!-- The loading of KaTeX is deferred to speed up page rendering -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
+        integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"
+        crossorigin="anonymous"></script>
 
     <!-- To automatically render math in text elements, include the auto-render extension: -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous"
         onload='renderMathInElement(document.body, {delimiters: [{left: "$$", right: "$$", display: true}, {left: "$", right: "$", display: false}]});'></script>
     <title>BetterGPT</title>
 </head>
 
 <body>
+    <!-- <div id="loading-screen">
+        <img src="./img/startup-background.png" alt="Loading Image" id="loading-image" />
+        <p id="loading-byline">Vatsal Dutt presents</p>
+        <h1 id="loading-title">CRYSTAL</h1>
+        <h1 id="loading-subtitle">Preview</h1> -->
+    <!-- </div> -->
+
+
     <div class="sidebar">
         <button class="logo">
-            <img src="./img/hamburger.png" alt="CRYSTAL Logo">
+            <!-- <img src="./img/hamburger.png" alt="CRYSTAL Logo"> -->
             <p onclick="window.location.href='home.html'" id="filled-text">CRYSTAL</p>
         </button>
         <div class="sidebarcontent">
             <div class="chatbuttons">
 
-                <!-- <img src="img/plus.png" alt="Plus Icon"> -->
-                <button class="newchat gradient">
+                <button class="newchat newchats gradient">
                     <p>New Chat</p>
                 </button>
 
@@ -82,11 +93,19 @@
                 <div class="account"><img src="./img/pfp.png" alt="PFP">
                     <div class="name">
                         <p class="acc-description">Account</p>
-                        <p>Adolph Hytler</p>
+                        <p>Anonymous User</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <div class="sidebartogglecontainer">
+        <div>
+            <button class="newchats newchatimg">
+                <img src="./img/plus old.png" alt="New Chat">
+            </button>
+        </div>
+        <img class="sidebartoggle" src="./img/arrow.png" alt="CRYSTAL Logo">
     </div>
     <div class="mainbody">
         <div id="drop-area">
@@ -97,11 +116,7 @@
         </div>
         <div class="conversation">
             <div class="intro">
-                <p class="description">Welcome to BetterGPT, powered by CRYSTAL! Upload pics, docs, videos, code;
-                    generate pics, docs, videos, code; get access to realtime info. ChatGPT won't do half this stuff for
-                    free, so here are all its paid features but all for free. Sorry if there are bugs - I'm the only guy
-                    maintaining this thing on my broke-ass home computer. I'm working on scaling it up, but it's a slow
-                    process. If you find any issues, hit me up on Snap we're all homies here.</p>
+                <p class="description"></p>
 
                 <div class="examples">
 
@@ -134,7 +149,7 @@
                     <img class="status-image" src="./img/Send Icon.png" alt="Send"></button>
             </div>
         </div>
-        <p class="notice">Limited Beta release for experimental research.</p>
+        <p class="notice">Limited Beta release for experimental research preview.</p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>

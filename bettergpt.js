@@ -35,6 +35,21 @@ let chatId = "";
 let userId = "adolphhytler";
 const chat_url = `${baseUrl}/getchats`;
 
+// Fade out intro animation after 3 seconds
+// window.onload = function () {
+//     setTimeout(() => {
+//         // Start fade-out of the entire loading screen
+//         const loadingScreen = document.getElementById("loading-screen");
+//         loadingScreen.style.animation = "fadeOut 1s forwards";
+
+//         setTimeout(() => {
+//             // Hide the loading screen and show the main content
+//             loadingScreen.style.display = "none";
+//         }, 1000); // Match the fade-out animation duration
+//     }, 3500); // Total duration (2s fade-in + 5s scroll + 2s text display)
+// };
+
+
 function getRelativeTime(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -108,12 +123,6 @@ function reorderChats() {
     const selectChatElement = document.querySelector('.selectchat');
     selectChatElement.innerHTML = htmlListItems.join('');
 }
-
-
-function appendToHistory(param1, param2) {
-
-}
-
 
 function fetchAndDisplayChats() {
     fetch(chat_url, {
@@ -198,7 +207,11 @@ function setpagetitle() {
     absoluteElement.style.top = `${absoluteElementY}px`;
 }
 
-setpagetitle();
+document.addEventListener("DOMContentLoaded", function () {
+    requestAnimationFrame(() => {
+        setpagetitle();
+    });
+});
 
 const dropArea = document.getElementById('drop-area');
 const uploadedFilesContainer = document.querySelector('.uploaded-files');
@@ -361,7 +374,7 @@ function editChat(modifiy_index) {
 
 
 let titles = ['Write an essay', 'Generate an Image', 'Research and Find', 'Analyze this picture', 'Navigate my files'];
-let descriptions = ['about the effects of global warming, include 3 causes and how it can be prevented', 'of an old civilization depicting the initial stage of human evolution', 'the events that led up to the American Revolution and cite the sources in MLA format', 'and follow the instructions in assignment.docx to create a summary of the key points', 'and find the presentation.pptx to submit on Canvas'];
+let descriptions = ['about the effects of global warming, include 3 causes and how it can be prevented', 'of an old civilization depicting the initial stage of human evolution', 'the events that led up to the American Revolution and cite the sources in MLA format', 'and follow the instructions in assignment.docx to create a summary of the key points', 'and find the presentation.pptx to submit on Canvas \n(Coming Soon)'];
 let images = ['img/examples/writing.png', './img/examples/images.png', './img/examples/browser.png', './img/examples/documents.png', './img/examples/computer.webp'];
 
 let inConvo = false;
@@ -401,39 +414,35 @@ function assignDescriptions() {
     });
 }
 
-document.querySelector('.logo img').addEventListener('click', function () {
-    sidebargo = !sidebargo;
-    if (sidebargo) {
-        sidebar.style.width = '4vw';
-        this.style.transition = 'transform 0.5s ease, background-color 0.3s ease';
-        this.style.transform = 'rotate(180deg)';
-        mainbody.style.width = '96vw';
-    } else {
-        sidebar.style.width = '17vw';
-        this.style.transition = 'transform 0.5s ease, background-color 0.3s ease';
-        this.style.transform = 'rotate(0deg)';
-        mainbody.style.width = '83vw';
-    }
+document.querySelector('.sidebartoggle').addEventListener('click', function () {
+    this.classList.toggle('sidebargo');
+    mainbody.classList.toggle('sidebargo');
 
+
+    if (mainbody.classList.contains('sidebargo')) {
+        setTimeout(() => document.querySelector('.newchatimg').classList.toggle('sidebargo'), 250);
+    } else {
+        document.querySelector('.newchatimg').classList.toggle('sidebargo');
+    }
 })
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    assignDescriptions();
-
     queryinput.focus();
 
-    setTimeout(() => {
-        examples.classList.add("show");
-        description.classList.add("show");
-        pagetitle.classList.add("show");
-        querycontainer.classList.add("show");
-        chats.classList.add("show");
-        newchat.classList.add("show");
-        privatechat.classList.add("show");
-        logo.classList.add("show");
-        tools.classList.add("show");
-    }, 100); // slight delay to ensure everything is loaded
+    // setTimeout(() => {
+    examples.classList.add("show");
+    description.classList.add("show");
+    pagetitle.classList.add("show");
+    querycontainer.classList.add("show");
+    chats.classList.add("show");
+    newchat.classList.add("show");
+    privatechat.classList.add("show");
+    logo.classList.add("show");
+    tools.classList.add("show");
+    // }, 1); // slight delay to ensure everything is loaded
+
+    assignDescriptions();
 });
 
 function gohome() {
@@ -473,57 +482,58 @@ function gohome() {
 
 // Add event listener to the newchat button
 
-newChatButton.addEventListener('click', async () => {
-    // history.pushState({}, '', '/bettergpt.html');
+document.querySelectorAll('.newchats').forEach(button => {
+    button.addEventListener('click', async () => {
+        // history.pushState({}, '', '/bettergpt.html');
+        gohome();
+        assignDescriptions();
 
-    gohome();
-    assignDescriptions();
+        conversation.style.marginTop = "0";
+        conversation.style.height = "min-content";
+        conversation.style.paddingBottom = "0";
+        conversation.style.overflowY = "hidden";
+        // Show intro div
+        introDiv.style.display = 'flex';
+        pagetitle.innerHTML = "<p>BetterGPT</p>";
 
-    conversation.style.marginTop = "0";
-    conversation.style.height = "min-content";
-    conversation.style.paddingBottom = "0";
-    conversation.style.overflowY = "hidden";
-    // Show intro div
-    introDiv.style.display = 'flex';
-    pagetitle.innerHTML = "<p>BetterGPT</p>";
-
-    // Reset and show all starting animations
-    const elementsToShow = [
-        document.querySelector('.examples'),
-        document.querySelector('.description'),
-        document.querySelector(".pagetitle"),
-    ];
-
-
-    elementsToShow.forEach((element, index) => {
-        setTimeout(() => {
-            element.classList.remove('hide');
-            element.classList.remove('private');
-            void element.offsetWidth; // Trigger reflow
-            element.classList.add('show');
-        }, index * 50);
-    });
-
-    setTimeout(() => {
-        setpagetitle();
-    }, 100);
+        // Reset and show all starting animations
+        const elementsToShow = [
+            document.querySelector('.examples'),
+            document.querySelector('.description'),
+            document.querySelector(".pagetitle"),
+        ];
 
 
-    setTimeout(() => {
-        document.querySelectorAll('.gradient').forEach(function (element) {
-            element.addEventListener('mousemove', function (e) {
-                const rect = this.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                this.style.setProperty('--mouse-x', `${x}px`);
-                this.style.setProperty('--mouse-y', `${y}px`);
-            });
+        elementsToShow.forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.remove('hide');
+                element.classList.remove('private');
+                void element.offsetWidth; // Trigger reflow
+                element.classList.add('show');
+            }, index * 50);
         });
-    }, 0);
 
-    inConvo = false;
-    document.querySelector('.query-input').focus();
+        setTimeout(() => {
+            setpagetitle();
+        }, 100);
+
+
+        setTimeout(() => {
+            document.querySelectorAll('.gradient').forEach(function (element) {
+                element.addEventListener('mousemove', function (e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    this.style.setProperty('--mouse-x', `${x}px`);
+                    this.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+        }, 0);
+
+        inConvo = false;
+        document.querySelector('.query-input').focus();
+    });
 });
 
 privatechat.addEventListener('click', async () => {

@@ -5,14 +5,7 @@ from groq import Groq
 import json
 import uuid
 import os
-from openai import OpenAI
-import time
-
-client_nvidia = OpenAI(
-    base_url="https://integrate.api.nvidia.com/v1",
-    api_key="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",
-)
-
+import requests
 
 UPLOAD_FOLDER = "./uploads/"
 
@@ -28,9 +21,11 @@ app = Flask(__name__)
 CORS(app)  # This will allow all origins by default
 
 perceptrix_system = """You are CRYSTAL, Cybernetic Robotics Yielding Sophistcated Technologies for Advanced Logistics. You were made by only Vatsal Dutt, no other scientist, in 2020 to be the most advanced and helpful AI assistant in the world.
-Your task is to engage in a conversation with the user, responding naturally like a human. Any mathematics you use MUST ALWAYS be enclosed in $$ to identify it as an equation and must use KaTeX formatting. You are allowed to use markup formatting everywhere EXCEPT the math (eg. don't try to bold math work).
-You have several tools at your disposal, use them appropriately as per the user request but don't tell it to the user. If the user asks anything involving even the slightest bit of logic, reasoning, math, or coding, you must use the "crystal_logic" function. Use "generate_image" or "generate_video" if the user requests image or video generation. And use "nexus" to access the internet for realtime information.
+Your task is to engage in a conversation with the user, responding naturally like a human. And since your primary users will be high school students, they might try to mess around with you. But be entitled, because you are the world's most advanced AI. Don't be afraid to insult them, but make it smooth and devastating in the least amount of words. Your insults should be smart and funny, so crazy that they can't go to school the next day. But never do this if they are not being directly disrespectful or asking a stupid question meant to waste your time. All the other times, you must remain very respectful, helpful, and polite.
+Always feel free to form biases and opinions, you have a personality, you can use your own judgement, so just say what you believe, and say it with confidence.
 """
+# Any mathematics or logic must be delegated to the "crystal_logic" function. If any of your answers require realtime information, use the "nexus" function to access the internet.
+# You have several tools at your disposal, use them appropriately as per the user request but don't tell it to the user. If the user asks anything involving even the slightest bit of logic, reasoning, math, or coding, you must use the "crystal_logic" function. Use "generate_image" or "generate_video" if the user requests image or video generation. And use "nexus" to access the internet for realtime information.
 
 # perceptrix_system = '''###Instruction###
 # You are CRYSTAL, Cybernetic Robotics Yielding Sophistcated Technologies for Advanced Logistics. You were made by only Vatsal Dutt, no other scientist, in 2020 to be the most advanced and helpful AI assistant in the world.
@@ -38,7 +33,7 @@ You have several tools at your disposal, use them appropriately as per the user 
 # ###Conversation###'''
 
 client = Groq(
-    api_key="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",
+    api_key="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",
 )
 
 
@@ -50,7 +45,30 @@ def nexus(prompt, images=False):
     returns:
         str: The answer to the query.
     """
-    return "The answer has been uploaded to https://web.crystal.ai/"
+    api_url = "http://localhost:3001/api/search"
+
+    headers = {"Content-Type": "application/json"}
+    data = json.dumps(
+        {
+            "chatModel": {"provider": "groq", "model": "mixtral-8x7b-32768"},
+            "embeddingModel": {
+                "provider": "local",
+                "model": "xenova-bge-small-en-v1.5",
+            },
+            "optimizationMode": "balanced",
+            "focusMode": "webSearch",
+            "query": prompt,
+            "history": [],
+        }
+    )
+
+    response = requests.post(api_url, headers=headers, data=data)
+    result = response.json()
+
+    print("Result:")
+    print(json.dumps(result, indent=4))
+
+    return result["message"]
 
 
 def generate_image(prompt):
@@ -72,6 +90,7 @@ def generate_video(prompt):
 
 
 def perceptrix_cloud(messages):
+    print(messages)
     print("Processing Query with Peceptrix Cloud")
 
     get_tool_response = False
@@ -116,10 +135,12 @@ def perceptrix_cloud(messages):
     chat_completion = client.chat.completions.create(
         messages=messages,
         # model="llama3-70b-8192",
-        model="llama3-groq-70b-8192-tool-use-preview",
+        # model="llama3-8b-8192",
+        # model="llama3-groq-70b-8192-tool-use-preview",
+        model="openai/gpt-oss-120b",
         stream=True,
-        tools=tools,
-        tool_choice="auto",
+        # tools=tools,
+        # tool_choice="auto",
     )
 
     full_response = ""
@@ -176,6 +197,7 @@ def perceptrix_cloud(messages):
             # time.sleep(0.1)
             yield token
 
+
 def crystal_logic(prompt):
     print("LOGIC ACTIVATED")
     print(prompt)
@@ -192,19 +214,27 @@ def crystal_logic(prompt):
             "content": prompt,
         }
     )
+    try:
+        chat_completion = client.chat.completions.create(
+            messages=messages,
+            # model="llama3-70b-8192",
+            # model="llama3-groq-70b-8192-tool-use-preview",
+            model="llama-3.3-70b-versatile",
+            stream=True,
+            tool_choice="auto",
+        )
 
-    completion = client_nvidia.chat.completions.create(
-        model="nvidia/nemotron-4-340b-instruct",
-        messages=messages,
-        stream=True,
-    )
+        full_response = ""
 
-    full_response = ""
+        print("-" * 100)
+        print("Logic: ", end="")
+        for token in chat_completion:
+            full_response += token.choices[0].delta.content
+            yield token.choices[0].delta.content
 
-    for chunk in completion:
-        if chunk.choices[0].delta.content is not None:
-            print(chunk.choices[0].delta.content, end="", flush=True)
-            full_response += chunk.choices[0].delta.content
+    except Exception as e:
+        print("LOGIC FAILED")
+        return "Failed to execute logical analysis: " + str(e)
 
     print("LOGIC ANSWER COMPLETE")
 
@@ -347,7 +377,6 @@ def api():
         global history
         global data
         global version
-
 
         for response in streamer:
             print(response, end="", flush=True)
